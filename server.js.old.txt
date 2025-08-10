@@ -1,0 +1,50 @@
+const express = require('express');
+const puppeteer = require('puppeteer');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.get('/table', async (req, res) => {
+  // scraping logic
+});
+    const url = `https://cloud.bridgefinesse.com/C263830/LockDown/${formatted}AFTOpenFinalTable.html`;
+
+(async () => {
+  try {
+    const browser = await puppeteer.launch({
+      headless: true,
+      args: ['--no-sandbox']
+    });
+
+    const page = await browser.newPage();
+    await page.goto('https://example.com', { waitUntil: 'networkidle2' });
+
+    const html = await page.content();
+    console.log(html);
+
+    await browser.close();
+  } catch (error) {
+    console.error('Scraping failed:', error);
+  }
+})();
+  	
+(async () => {
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  await page.goto('https://example.com', { waitUntil: 'networkidle2' });
+  const html = await page.content();
+  console.log(html);
+  await browser.close();
+})();
+
+    res.setHeader('Content-Type', 'text/html');
+    res.send(tableHTML);	
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Failed to fetch table');
+  }
+});
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
