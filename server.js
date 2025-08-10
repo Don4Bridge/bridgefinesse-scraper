@@ -32,17 +32,18 @@ const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] 
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36'
     );
 
-    let combinedHTML = '';
+  let combinedHTML = '';
 
-    for (const url of urls) {
-      const response = await page.goto(url, { waitUntil: 'networkidle2' });
-      if (response.status() === 404) {
-        combinedHTML += `<p>Table not found for ${url}</p>`;
-      } else {
-        const html = await page.content();
-	combinedHTML += html + '<hr><hr><hr>';
-      }
-    }
+for (const url of urls) {
+  const response = await page.goto(url, { waitUntil: 'networkidle2' });
+  if (response.status() === 404) {
+    combinedHTML += `<p>Table not found for ${url}</p>`;
+  } else {
+    const html = await page.content();
+combinedHTML += html + '<hr><hr><hr>';
+  }
+}
+
 
 
     await browser.close();
