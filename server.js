@@ -16,4 +16,29 @@ app.get("/table", async (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+});	
+
+app.get('/fetch-table', async (req, res) => {
+  try {
+    console.log('Launching browser...');
+    const browser = await puppeteer.launch({ headless: true });
+    const page = await browser.newPage();
+
+    console.log('Navigating to BridgeFinesse...');
+    await page.goto('https://bridgefinesse.com/some-tournament-url', {
+      waitUntil: 'networkidle2',
+    });
+
+    console.log('Waiting for table...');
+    await page.waitForSelector('table'); // Adjust selector if needed
+
+    const tableHTML = await page.$eval('table', el => el.outerHTML);
+    await browser.close();
+
+    console.log('Table fetched successfully');
+    res.send(tableHTML);
+  } catch (error) {
+    console.error('Scraping error:', error);
+    res.status(500).send('Failed to fetch table');
+  }
 });
