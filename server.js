@@ -22,22 +22,28 @@ app.get('/table', async (req, res) => {
     const dd = String(today.getDate()).padStart(2, '0');
     const dateString = `${yy}${mm}${dd}`;
 
-    const url = `https://cloud.bridgefinesse.com/c263830/lockdown/${dateString}aftopenfinaltable.html`;
+    const urls = [`https://cloud.bridgefinesse.com/c263830/lockdown/${dateString}AFTOpenfinaltable.html`,`https://cloud.bridgefinesse.com/c263830/lockdown/${dateString}AFTLimitedfinaltable.html`
+];
 
-    const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
+    
+const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
     const page = await browser.newPage();
     await page.setUserAgent(
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36'
     );
-    const response = await page.goto(url, { waitUntil: 'networkidle2' });
 
-    if (response.status() === 404) {
-      res.status(404).send(`Table not found for ${dateString}`);
-    } else {
-      const tableHTML = await page.content();
-      res.setHeader('Content-Type', 'text/html');
-      res.send(tableHTML);
+    let combinedHTML = '';
+
+    for (const url of urls) {
+      const response = await page.goto(url, { waitUntil: 'networkidle2' });
+      if (response.status() === 404) {
+        combinedHTML += `<p>Table not found for ${url}</p>`;
+      } else {
+        const html = await page.content();
+	combinedHTML += html + '<hr><hr><hr>';
+      }
     }
+
 
     await browser.close();
   } catch (error) {
