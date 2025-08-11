@@ -22,8 +22,7 @@ app.get('/table', async (req, res) => {
     const dd = String(today.getDate()).padStart(2, '0');
     const dateString = `${yy}${mm}${dd}`;
 
-    const urls = [`https://cloud.bridgefinesse.com/C263830/LockDown/${dateString}AFTOpenFinalTable.html`,`https://cloud.bridgefinesse.com/C263830/LockDown/${dateString}AFTLimitedFinalTable.html`
-];
+ const urls = [`https://cloud.bridgefinesse.com/C263830/LockDown/${dateString}AFTOpenFinalTable.html`,`https://cloud.bridgefinesse.com/C263830/LockDown/${dateString}AFTLimitedFinalTable.html`
 
     
 const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
@@ -37,7 +36,7 @@ const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] 
 for (const url of urls) {
   const response = await page.goto(url, { waitUntil: 'networkidle2' });
   if (response.status() === 404) {
-    combinedHTML += `<p>Table not found for ${url}</p>`;
+    combinedHTML += await browser.close();
   } else {
     const html = await page.content();
 combinedHTML += '<hr><hr><hr>' + html;
