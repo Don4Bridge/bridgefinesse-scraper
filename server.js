@@ -16,7 +16,7 @@ app.listen(PORT, () => {
 app.get('/table', async (req, res) => {
   try {
     // Get today's date in yymmdd format
-    const today = (new Date()-2);
+    const today = (new Date());
     const yy = String(today.getFullYear()).slice(2);
     const mm = String(today.getMonth() + 1).padStart(2, '0');
     const dd = String(today.getDate()).padStart(2, '0');
@@ -40,7 +40,7 @@ for (const url of urls) {
     combinedHTML += `<p>Table not found for ${url}</p>`;
   } else {
     const html = await page.content();
-combinedHTML += html + '<hr><hr><hr>';
+combinedHTML += '<hr><hr><hr>' + html;
   }
 }
 
