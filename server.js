@@ -22,7 +22,7 @@ app.get('/table', async (req, res) => {
     const dd = String(today.getDate()).padStart(2, '0');
     const dateString = `${yy}${mm}${dd}`;
 
-    const urls = [`https://cloud.bridgefinesse.com/c263830/lockdown/${dateString}AFTOpenfinaltable.html`,`https://cloud.bridgefinesse.com/c263830/lockdown/${dateString}AFTLimitedfinaltable.html`
+    const urls = [`https://cloud.bridgefinesse.com/C263830/lockdown/${dateString}AFTOpenFinalTable.html`,`https://cloud.bridgefinesse.com/C263830/lockdown/${dateString}AFTLimitedFinalTable.html`
 ];
 
     
