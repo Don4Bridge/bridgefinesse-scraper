@@ -15,6 +15,25 @@ function getFormattedDate(offsetDays = 0) {
   return `${year}${month}${day}`;
 }
 
+app.get('/debug', async (req, res) => {
+  const puppeteer = require('puppeteer-extra');
+  const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+  puppeteer.use(StealthPlugin());
+
+  const browser = await puppeteer.launch({
+    headless: true,
+    args: ['--no-sandbox', '--disable-setuid-sandbox']
+  });
+
+  const page = await browser.newPage();
+  await page.goto('https://your-target-url.com', { waitUntil: 'networkidle2' });
+
+  const html = await page.content();
+  await browser.close();
+
+  res.send(html); // View this in your browser
+});
+
 async function fetchTableHTML(url) {
   const browser = await puppeteer.launch({
     headless: 'new',
