@@ -16,9 +16,7 @@ function getFormattedDate(offsetDays = 0) {
 }
 
 app.get('/debug', async (req, res) => {
-  const puppeteer = require('puppeteer-extra');
-  const StealthPlugin = require('puppeteer-extra-plugin-stealth');
-  puppeteer.use(StealthPlugin());
+  
 
   const browser = await puppeteer.launch({
     headless: true,
