@@ -1,23 +1,18 @@
 {
-  "name": "bridge-table-scraper",
+  "name": "bridge-scraper",
   "version": "1.0.0",
-  "description": "Scrapes bridge tournament tables and serves them via Express",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node index.js",
-    "postinstall": "node node_modules/puppeteer/install.js"
-  },
-{
-  "scripts": {
+    "start": "node server.js",
     "postinstall": "apt-get update && apt-get install -y wget gnupg && wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add - && echo 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main' >> /etc/apt/sources.list.d/google-chrome.list && apt-get update && apt-get install -y google-chrome-stable"
-  }
-}
-  
+  },
   "dependencies": {
-    "puppeteer": "^19.0.0",
+    "express": "^4.18.2",
+    "puppeteer": "^21.3.8",
     "puppeteer-extra": "^3.3.4",
-    "puppeteer-extra-plugin-stealth": "^2.11.1",
-    "cheerio": "^1.0.0-rc.12",
-    "express": "^4.18.2"
+    "puppeteer-extra-plugin-stealth": "^2.11.1"
+  },
+  "puppeteer": {
+    "skipDownload": true
   }
 }
