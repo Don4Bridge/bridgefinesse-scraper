@@ -4,7 +4,8 @@
   "description": "Scrapes bridge tournament tables and serves them via Express",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+      "postinstall": "puppeteer install"
   },
   "dependencies": {
   "puppeteer": "^19.0.0",
