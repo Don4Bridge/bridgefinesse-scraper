@@ -24,9 +24,16 @@ app.get('/debug', async (req, res) => {
   
 
 const browser = await puppeteer.launch({
-  headless: 'new', // ✅ Use new headless mode
-  args: ['--no-sandbox', '--disable-setuid-sandbox']
+  headless: 'new', // or false if you want headful mode
+  executablePath: '/usr/bin/google-chrome',
+  args: [
+    '--no-sandbox',
+    '--disable-setuid-sandbox',
+    '--disable-blink-features=AutomationControlled',
+    '--window-size=1920,1080'
+  ]
 });
+
 
   const page = await browser.newPage();
   await page.goto('https://your-target-url.com', { waitUntil: 'networkidle2' });
