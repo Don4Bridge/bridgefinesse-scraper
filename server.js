@@ -20,10 +20,11 @@ app.get('/table', async (req, res) => {
       `https://cloud.bridgefinesse.com/C263830/LockDown/${dateString}AFTLimitedFinalTable.html`
     ];
 
-    const browser = await puppeteer.launch({
-      headless: 'new',
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
-    });
+const browser = await puppeteer.launch({
+  headless: 'new',
+  executablePath: puppeteer.executablePath(), // 👈 This tells Puppeteer to use its bundled Chromium
+  args: ['--no-sandbox', '--disable-setuid-sandbox']
+});
 
     const page = await browser.newPage();
     await page.setUserAgent(
