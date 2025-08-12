@@ -1,57 +1,104 @@
 const express = require('express');
 const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+const cheerio = require('cheerio');
 
 puppeteer.use(StealthPlugin());
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.get('/table', async (req, res) => {
-  try {
-    const today = new Date();
-    const yy = String(today.getFullYear()).slice(2);
-    const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const dd = String(today.getDate()).padStart(2, '0');
-    const dateString = `${yy}${mm}${dd}`;
+function getFormattedDate(offsetDays = 0) {
+  const date = new Date();
+  date.setDate(date.getDate() - offsetDays);
+  const year = String(date.getFullYear()).slice(2);
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}${month}${day}`;
+}
 
-    const urls = [
-      `https://cloud.bridgefinesse.com/C263830/LockDown/${dateString}AFTOpenFinalTable.html`,
-      `https://cloud.bridgefinesse.com/C263830/LockDown/${dateString}AFTLimitedFinalTable.html`
-    ];
+async function fetchTableHTML(url) {
+  const browser = await puppeteer.launch({
+    headless: 'new',
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-blink-features=AutomationControlled'
+    ]
+  });
 
-const browser = await puppeteer.launch({
-  headless: 'new',
-  executablePath: puppeteer.executablePath(), // 👈 This tells Puppeteer to use its bundled Chromium
-  args: ['--no-sandbox', '--disable-setuid-sandbox']
-});
+  const page = await browser.newPage();
 
-    const page = await browser.newPage();
-    await page.setUserAgent(
-      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36'
-    );
+  await page.setUserAgent(
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115 Safari/537.36'
+  );
 
-    let combinedHTML = '';
+  await page.setExtraHTTPHeaders({
+    'Accept-Language': 'en-US,en;q=0.9'
+  });
 
-    for (const url of urls) {
-      const response = await page.goto(url, { waitUntil: 'networkidle2' });
-      if (response.status() === 404) {
-        combinedHTML += `<p>Table not found for ${url}</p>`;
-      } else {
-        const html = await page.content();
-        combinedHTML += `<hr><hr><hr>${html}`;
-      }
-    }
+  await page.setViewport({ width: 1280, height: 800 });
 
+  const response = await page.goto(url, {
+    waitUntil: 'domcontentloaded',
+    timeout: 15000
+  });
+
+  const status = response.status();
+  console.log(`📄 Fetched ${url} with status: ${status}`);
+
+  if (status !== 200) {
     await browser.close();
-    res.send(combinedHTML); // ✅ This was missing in your original code
+    throw new Error(`Page returned status ${status}`);
+  }
 
+  await page.waitForSelector('table', { timeout: 5000 }).catch(() => {
+    console.log('⚠️ Table not found after wait');
+  });
+
+  const table = await page.$('table');
+  if (!table) {
+    const content = await page.content();
+    console.log('⚠️ No <table> found. Dumping partial page content:');
+    console.log(content.slice(0, 1000));
+    await browser.close();
+    throw new Error('No <table> element found on page');
+  }
+
+  const tableHTML = await page.evaluate(el => el.outerHTML, table);
+  await browser.close();
+  return tableHTML;
+}
+
+function stripFirstHeaderRow(tableHTML) {
+  const $ = cheerio.load(tableHTML);
+  $('table tr').first().remove();
+  return $.html('table');
+}
+
+app.get('/table', async (req, res) => {
+  console.log('🔍 /table route hit');
+
+  const formattedDate = getFormattedDate();
+  const url1 = `https://cloud.bridgefinesse.com/C263830/LockDown/${formattedDate}AFTOpenFinalTable.html`;
+  const url2 = `https://cloud.bridgefinesse.com/C263830/LockDown/${formattedDate}AFTLimitedFinalTable.html`;
+
+  try {
+    const table1 = await fetchTableHTML(url1);
+    const spacer = '<br><br><br>';
+    const table2Raw = await fetchTableHTML(url2);
+    const table2Cleaned = stripFirstHeaderRow(table2Raw);
+
+    const combinedHTML = `${table1}${spacer}${table2Cleaned}`;
+    res.setHeader('Content-Type', 'text/html');
+    res.send(combinedHTML);
   } catch (error) {
-    console.error('Scraping failed:', error);
-    res.status(500).send('Failed to fetch table');
+    console.error('❌ Error fetching tables:', error.message);
+    res.status(500).send('Failed to fetch tables');
   }
 });
 
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
