@@ -2,11 +2,7 @@ const express = require('express');
 const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 puppeteer.use(StealthPlugin());
-const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 const cheerio = require('cheerio');
-
-puppeteer.use(StealthPlugin());
-
 const app = express();
 const PORT = process.env.PORT || 3000;
 
