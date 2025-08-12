@@ -4,16 +4,14 @@
   "description": "Scrapes bridge tournament tables and serves them via Express",
   "main": "index.js",
   "scripts": {
-  "scripts": {
-  "start": "node index.js",
-  "postinstall": "node node_modules/puppeteer/install.js"
-}
+    "start": "node index.js",
+    "postinstall": "node node_modules/puppeteer/install.js"
   },
   "dependencies": {
-  "puppeteer": "^19.0.0",
-  "puppeteer-extra": "^3.3.4",
-  "puppeteer-extra-plugin-stealth": "^2.11.1",
-  "cheerio": "^1.0.0-rc.12",
-  "express": "^4.18.2"
-}
+    "puppeteer": "^19.0.0",
+    "puppeteer-extra": "^3.3.4",
+    "puppeteer-extra-plugin-stealth": "^2.11.1",
+    "cheerio": "^1.0.0-rc.12",
+    "express": "^4.18.2"
+  }
 }
