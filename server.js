@@ -18,10 +18,10 @@ function getFormattedDate(offsetDays = 0) {
 app.get('/debug', async (req, res) => {
   
 
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
-  });
+const browser = await puppeteer.launch({
+  headless: 'new', // ✅ Use new headless mode
+  args: ['--no-sandbox', '--disable-setuid-sandbox']
+});
 
   const page = await browser.newPage();
   await page.goto('https://your-target-url.com', { waitUntil: 'networkidle2' });
