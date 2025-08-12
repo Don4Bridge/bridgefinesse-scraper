@@ -8,10 +8,15 @@ const PORT = process.env.PORT || 3000;
 
 function getFormattedDate(offsetDays = 0) {
   const date = new Date();
-  date.setDate(date.getDate() - offsetDays);
-  const year = String(date.getFullYear()).slice(2);
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
+
+  // Convert to PDT
+  const local = new Date(date.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }));
+  local.setDate(local.getDate() - offsetDays);
+
+  const year = String(local.getFullYear()).slice(2);
+  const month = String(local.getMonth() + 1).padStart(2, '0');
+  const day = String(local.getDate()).padStart(2, '0');
+
   return `${year}${month}${day}`;
 }
 
