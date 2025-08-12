@@ -16,6 +16,12 @@ app.get('/table', async (req, res) => {
       args: ['--no-sandbox']
     });
 
+  const browser = await puppeteer.launch({
+  headless: 'new',
+  executablePath: puppeteer.executablePath(), // 👈 This tells Puppeteer to use its bundled Chromium
+  args: ['--no-sandbox', '--disable-setuid-sandbox']
+});
+
     const page = await browser.newPage();
     await page.goto('https://example.com', { waitUntil: 'networkidle2' });
 
